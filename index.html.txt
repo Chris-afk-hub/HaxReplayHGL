@@ -3,105 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HaxReplayHGL | Oficial</title>
+    <title>HaxReplayHGL | Pro Hub</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --card-bg: #1e293b; --accent: #22c55e; --text: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
-        .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 30px; text-align: center; border-bottom: 2px solid var(--accent); }
-        .container { max-width: 1000px; margin: auto; padding: 20px; }
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #22c55e; /* Verde Haxball */
+            --text: #f8fafc;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .header h1 { margin: 0; font-size: 2.5rem; letter-spacing: -1px; }
+        .header p { color: #94a3b8; margin-top: 10px; }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+
+        /* Estilo del Vivo */
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ef4444;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .dot { width: 10px; height: 10px; background: #ef4444; border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .main-player {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 50px;
+        }
+
+        /* Grilla de Replays */
+        .replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card h3 { margin: 10px 0 5px 0; font-size: 1.1rem; color: var(--text); }
+        .card p { color: #64748b; font-size: 0.8rem; margin: 0; }
         
-        /* Sección Vivo */
-        .live-container { background: #000; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; margin-bottom: 40px; border: 1px solid #334155; }
+        .btn-view {
+            margin-top: 15px;
+            width: 100%;
+            background: var(--accent);
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+        }
+
+        /* Modal Reproductor */
+        #player-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #player-overlay iframe { width: 90%; height: 80%; border: 2px solid var(--accent); border-radius: 10px; }
         
-        /* Lista de Replays */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid transparent; transition: 0.3s; cursor: pointer; }
-        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
-        .card h3 { margin: 0 0 10px 0; font-size: 1.1rem; }
-        .card p { font-size: 0.8rem; color: #94a3b8; }
-        
-        /* Reproductor Modal */
-        #modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; }
-        iframe { width: 90%; height: 80%; border: 2px solid var(--accent); border-radius: 8px; }
-        .close-btn { background: #ef4444; color: white; padding: 10px 20px; border: none; cursor: pointer; margin: 10px; font-weight: bold; border-radius: 5px; }
+        .close-btn {
+            background: #ef4444; color: white; border: none; padding: 10px 20px;
+            margin-bottom: 10px; cursor: pointer; border-radius: 5px; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>HAX<span style="color: var(--accent)">REPLAY</span>HGL</h1>
-    <p>Host 24/7 - Transmisiones y Repeticiones</p>
+    <p>Host 24/7 - Transmisiones y Análisis</p>
 </div>
 
 <div class="container">
-    <h2 style="color: #ef4444; font-size: 0.8rem;">● EN VIVO</h2>
-    <div class="live-container">
-        <iframe src="https://www.youtube.com/embed/LIVE_ID?autoplay=1&mute=1" style="width:100%; height:100%; border:none;"></iframe>
+    <div class="live-status"><span class="dot"></span> Transmisión en Vivo</div>
+    <div class="main-player">
+        <iframe src="https://www.youtube.com/embed/LIVE_ID_AQUI?autoplay=1&mute=1" id="live-iframe" style="width:100%; height:100%; border:none;"></iframe>
     </div>
 
-    <h2 style="color: var(--accent); font-size: 0.8rem;">REPETICIONES RECIENTES</h2>
-    <div id="replays-list" class="grid">
-        <p>Cargando archivos desde el servidor...</p>
+    <h2 style="color: var(--accent); margin-bottom: 20px;">Repeticiones Recientes</h2>
+    <div class="replay-grid" id="lista-replays">
+        <p>Buscando partidos en el servidor...</p>
     </div>
 </div>
 
-<div id="modal">
-    <button class="close-btn" onclick="cerrar()">CERRAR REPRODUCCIÓN</button>
-    <div id="video-box" style="width:100%; display:flex; justify-content:center;"></div>
+<div id="player-overlay">
+    <button class="close-btn" onclick="cerrar()">CERRAR REPRODUCTOR</button>
+    <div id="video-content" style="width: 100%; height: 100%; display: flex; justify-content: center;"></div>
 </div>
 
 <script>
-    // 1. CONFIGURACIÓN (PEGAR TUS DATOS AQUÍ)
-    const SUB_URL = "https://vilysczynwkdxnpdboyi.supabase.co"; 
-    const SUB_KEY = "TU_ANON_KEY_AQUÍ"; // <--- PEGA AQUÍ TU LLAVE ANON
-    
-    const supabase = typeof supabase !== 'undefined' ? supabase.createClient(SUB_URL, SUB_KEY) : supabase.createClient(SUB_URL, SUB_KEY);
+    // --- TUS DATOS DE SUPABASE YA CARGADOS ---
+    const SUPABASE_URL = "https://vilysczynwkdxnpdboyi.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_5Rzkyp1zx_b6s3EpRhf5-A_6wjsiwTS";
 
-    // 2. FUNCIÓN PARA BUSCAR ARCHIVOS EN SUPABASE
-    async function obtenerReplays() {
-        const { data, error } = await supabase.storage.from('replays').list('', {
-            limit: 20,
-            sortBy: { column: 'created_at', order: 'desc' }
-        });
+    // Inicializamos Supabase
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function cargarReplays() {
+        const { data, error } = await _supabase.storage
+            .from('replays') // Tu bucket debe llamarse 'replays'
+            .list('', {
+                limit: 50,
+                sortBy: { column: 'created_at', order: 'desc' }
+            });
+
+        const listaDiv = document.getElementById('lista-replays');
 
         if (error) {
-            console.error("Error:", error);
+            listaDiv.innerHTML = `<p style="color:red">Error al conectar: ${error.message}</p>`;
             return;
         }
 
-        const container = document.getElementById('replays-list');
-        container.innerHTML = "";
+        if (data.length === 0) {
+            listaDiv.innerHTML = "<p>No hay repeticiones grabadas todavía.</p>";
+            return;
+        }
+
+        listaDiv.innerHTML = ""; // Limpiar mensaje de carga
 
         data.forEach(file => {
-            // Obtenemos la URL pública del archivo
-            const { data: urlData } = supabase.storage.from('replays').getPublicUrl(file.name);
-            const publicUrl = urlData.publicUrl;
+            // Obtenemos la URL pública del archivo .hbr2
+            const { data: urlData } = _supabase.storage.from('replays').getPublicUrl(file.name);
+            const fileUrl = urlData.publicUrl;
 
-            container.innerHTML += `
-                <div class="card" onclick="ver('${publicUrl}')">
+            listaDiv.innerHTML += `
+                <div class="card" onclick="abrir('${fileUrl}')">
+                    <p style="color:var(--accent); font-weight:bold;">MODO 3V3</p>
                     <h3>${file.name.replace('.hbr2', '')}</h3>
-                    <p>Fecha: ${new Date(file.created_at).toLocaleDateString()}</p>
-                    <button style="width:100%; background:var(--accent); border:none; padding:8px; border-radius:5px; margin-top:10px; font-weight:bold; cursor:pointer;">VER AHORA</button>
+                    <p>📅 ${new Date(file.created_at).toLocaleDateString()}</p>
+                    <button class="btn-view">VER PARTIDO</button>
                 </div>
             `;
         });
     }
 
-    function ver(url) {
-        document.getElementById('modal').style.display = 'flex';
-        // El visor de Haxball necesita la URL codificada
-        const visor = `https://www.haxball.com/replay?url=${encodeURIComponent(url)}`;
-        document.getElementById('video-box').innerHTML = `<iframe src="${visor}"></iframe>`;
+    function abrir(url) {
+        document.getElementById('player-overlay').style.display = 'flex';
+        // Usamos el visor oficial de Haxball
+        const visorUrl = `https://www.haxball.com/replay?url=${encodeURIComponent(url)}`;
+        document.getElementById('video-content').innerHTML = `<iframe src="${visorUrl}"></iframe>`;
     }
 
     function cerrar() {
-        document.getElementById('modal').style.display = 'none';
-        document.getElementById('video-box').innerHTML = "";
+        document.getElementById('player-overlay').style.display = 'none';
+        document.getElementById('video-content').innerHTML = "";
     }
 
-    obtenerReplays();
+    // Ejecutar al cargar la página
+    cargarReplays();
 </script>
 
 </body>
