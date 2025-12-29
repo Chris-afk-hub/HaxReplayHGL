@@ -3,110 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HaxReplayHGL | App</title>
+    <title>HaxReplayHGL | Oficial</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- ESTILOS GENERALES --- */
         :root {
-            --bg: #0f172a; /* Fondo azul oscuro */
+            --bg: #0f172a;
             --card-bg: #1e293b;
-            --accent: #22c55e; /* Verde Haxball */
+            --accent: #22c55e;
             --text: #f8fafc;
-            --disabled: #475569; /* Gris para botones desactivados */
+            --disabled: #475569;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        h1, h2 { color: var(--accent); text-align: center; }
         
-        /* --- CONTENEDORES DE VISTAS --- */
-        .view-container {
-            display: none; /* Ocultamos todas las vistas por defecto */
-            width: 100%;
-            max-width: 800px;
-            flex-direction: column;
-            align-items: center;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        /* La clase .active mostrará la vista actual */
+        /* Contenedores de Vistas */
+        .view-container { display: none; width: 100%; max-width: 800px; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease-out; }
         .view-container.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- INPUTS Y BOTONES --- */
+        /* Inputs y Botones Estilizados */
         input[type="text"] {
             padding: 15px; font-size: 1.1rem; border-radius: 8px; border: 2px solid var(--accent);
             background: var(--card-bg); color: white; width: 80%; max-width: 400px; margin-bottom: 20px; text-align: center;
         }
         .btn-main {
-            padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; border: none;
-            background: var(--accent); color: #000; cursor: pointer; transition: 0.3s; width: 80%; max-width: 400px; margin: 10px 0;
+            padding: 15px 30px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; border: none;
+            background: var(--accent); color: #000; cursor: pointer; transition: 0.2s; width: 80%; max-width: 400px; margin: 8px 0;
         }
-        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
-        
-        /* Botones Grises/Desactivados */
-        .btn-disabled {
-            background: var(--disabled); color: #94a3b8; cursor: not-allowed; box-shadow: none;
-        }
-        .btn-disabled:hover { transform: none; box-shadow: none; }
+        .btn-main:hover { transform: scale(1.03); filter: brightness(1.1); }
+        .btn-disabled { background: var(--disabled); color: #94a3b8; cursor: not-allowed; }
+        .btn-back { background: transparent; border: 1px solid var(--accent); color: var(--accent); margin-top: 20px; font-size: 0.9rem; width: auto; }
 
-        .btn-back { background: transparent; border: 1px solid var(--accent); color: var(--accent); margin-top: 20px; font-size: 0.9rem; padding: 10px 20px; }
-
-        /* --- Estilos Específicos --- */
-        /* Menú Principal */
-        .menu-grid { display: flex; flex-direction: column; width: 100%; align-items: center; gap: 15px; margin-top: 30px; }
-        
-        /* Sección VIVO */
-        .video-container { width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid var(--accent); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
-        
-        /* Grilla de Replays (Igual que antes) */
-        .replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; width: 100%; margin-top: 20px; }
-        .card { background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; transition: 0.3s; }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card h3 { font-size: 1rem; margin: 10px 0; color: white; }
-        .card p { font-size: 0.8rem; color: #94a3b8; }
-        .btn-card-view { width: 100%; background: var(--accent); border: none; padding: 8px; border-radius: 5px; margin-top: 10px; font-weight: bold; cursor: pointer; color: #000;}
-
-        /* Modal Reproductor */
-        #player-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
-        #player-modal iframe { width: 90%; height: 80%; border: 2px solid var(--accent); border-radius: 10px; }
-        .close-modal-btn { background: #ef4444; color: white; padding: 10px 20px; border: none; cursor: pointer; margin-bottom: 15px; font-weight: bold; border-radius: 5px; }
+        /* Menú y Replays */
+        .menu-grid { display: flex; flex-direction: column; width: 100%; align-items: center; gap: 10px; margin-top: 20px; }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid var(--accent); border-radius: 12px; overflow: hidden; margin-top: 15px; }
+        .replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 100%; margin-top: 20px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #334155; transition: 0.3s; }
+        .card:hover { border-color: var(--accent); }
+        .card h3 { margin: 0 0 10px 0; font-size: 1rem; }
+        .card p { font-size: 0.8rem; color: #94a3b8; margin: 0; }
     </style>
 </head>
 <body>
 
     <div id="view-welcome" class="view-container active">
-        <h1 style="font-size: 2.5rem; margin-bottom: 40px;">HAX<span style="color:white">REPLAY</span>HGL</h1>
-        <p style="margin-bottom: 30px; font-size: 1.2rem;">Bienvenido al portal oficial.</p>
+        <h1 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 10px;">HAXREPLAYHGL</h1>
+        <p style="margin-bottom: 30px;">Portal de Repeticiones y Host 24/7</p>
         <input type="text" id="username-input" placeholder="Introducir nombre de usuario">
         <button class="btn-main" onclick="entrarApp()">Ingresar</button>
     </div>
 
-
     <div id="view-menu" class="view-container">
-        <h1 id="greeting-text">Bienvenido/a</h1>
-        <p style="font-size: 1.2rem; margin-bottom: 30px;">¿Qué quieres ver hoy?</p>
-        
+        <h2 id="greeting-text">Bienvenido/a</h2>
+        <p>¿Qué quieres ver hoy?</p>
         <div class="menu-grid">
-            <button class="btn-main" onclick="cambiarVista('view-categories')">📺 Repeticiones</button>
+            <button class="btn-main" onclick="cambiarVista('view-categories')">🎞️ Repeticiones</button>
             <button class="btn-main" onclick="cambiarVista('view-live')">🔴 En Vivo</button>
             <button class="btn-main btn-disabled">🛡️ Ofis (Próximamente)</button>
         </div>
     </div>
 
-
     <div id="view-live" class="view-container">
-        <h2>En vivo host 2v2 Big</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/LIVE_ID_AQUI?autoplay=1&mute=1" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+        <h2 style="color: #ef4444;">● En vivo host 2v2 Big</h2>
+        <div class="video-box">
+            <iframe id="live-frame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
         </div>
         <button class="btn-main btn-back" onclick="cambiarVista('view-menu')">⬅ Volver al Menú</button>
     </div>
 
-
     <div id="view-categories" class="view-container">
-        <h2>Selecciona una Categoría</h2>
-        <div class="menu-grid" style="margin-top: 20px;">
-            <button class="btn-main" onclick="cargarListaBig1v1()">▶ Repeticiones Big 1v1</button>
-            
+        <h2>Categorías</h2>
+        <div class="menu-grid">
+            <button class="btn-main" onclick="cargarBig1v1()">Repeticiones Big 1v1</button>
             <button class="btn-main btn-disabled">Repeticiones Big 2v2</button>
             <button class="btn-main btn-disabled">Repeticiones Big 3v3</button>
             <button class="btn-main btn-disabled">Repeticiones Futsal 1v1</button>
@@ -117,107 +85,70 @@
         <button class="btn-main btn-back" onclick="cambiarVista('view-menu')">⬅ Volver al Menú</button>
     </div>
 
-
-    <div id="view-list-big1v1" class="view-container">
-        <h2>Repeticiones Big 1v1</h2>
-        <div id="replay-grid-container" class="replay-grid">
-            <p>Cargando partidos...</p>
-        </div>
-        <button class="btn-main btn-back" onclick="cambiarVista('view-categories')">⬅ Volver a Categorías</button>
+    <div id="view-list" class="view-container">
+        <h2 id="list-title">Repeticiones</h2>
+        <div id="replay-container" class="replay-grid"></div>
+        <button class="btn-main btn-back" onclick="cambiarVista('view-categories')">⬅ Volver</button>
     </div>
-
-
-    <div id="player-modal">
-        <button class="close-modal-btn" onclick="cerrarReproductor()">✖ CERRAR VIDEO</button>
-        <div id="modal-video-container"></div>
-    </div>
-
 
 <script>
-    // --- LÓGICA DE LA APLICACIÓN ---
-
-    // 1. Configuración de Supabase (TUS LLAVES REALES)
+    // --- CONFIGURACIÓN ---
     const SUPABASE_URL = "https://vilysczynwkdxnpdboyi.supabase.co";
     const SUPABASE_KEY = "sb_publishable_5Rzkyp1zx_b6s3EpRhf5-A_6wjsiwTS";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 2. Función para navegar entre pantallas
-    function cambiarVista(vistaId) {
-        // Ocultamos todas las vistas
-        document.querySelectorAll('.view-container').forEach(div => {
-            div.classList.remove('active');
-        });
-        // Mostramos la vista deseada
-        document.getElementById(vistaId).classList.add('active');
+    function cambiarVista(id) {
+        document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
 
-    // 3. Función del botón "Ingresar" en la bienvenida
     function entrarApp() {
-        const usernameInput = document.getElementById('username-input');
-        let username = usernameInput.value.trim();
-        
-        if (username === "") {
-            username = "Jugador"; // Nombre por defecto si no escribe nada
-        }
-
-        // Actualizamos el saludo en el menú principal
-        document.getElementById('greeting-text').innerText = `Bienvenido/a, ${username}`;
-        
-        // Cambiamos a la vista del menú
+        const user = document.getElementById('username-input').value || "Jugador/a";
+        document.getElementById('greeting-text').innerText = `Bienvenido/a, ${user}`;
+        // Ponemos un video real de prueba en el vivo para que no de error
+        document.getElementById('live-frame').src = "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1";
         cambiarVista('view-menu');
     }
 
-    // 4. Función para cargar la lista de Big 1v1 desde Supabase
-    async function cargarListaBig1v1() {
-        // Primero mostramos la pantalla de lista
-        cambiarVista('view-list-big1v1');
-        const container = document.getElementById('replay-grid-container');
-        container.innerHTML = '<p>Buscando en el servidor...</p>';
+    async function cargarBig1v1() {
+        cambiarVista('view-list');
+        document.getElementById('list-title').innerText = "Repeticiones Big 1v1";
+        const container = document.getElementById('replay-container');
+        container.innerHTML = "<p>Cargando partidos...</p>";
 
-        // Pedimos los datos a Supabase
-        const { data, error } = await _supabase.storage
-            .from('replays')
-            .list('', { limit: 20, sortBy: { column: 'created_at', order: 'desc' } });
+        const { data, error } = await _supabase.storage.from('replays').list('', {
+            limit: 20, sortBy: { column: 'created_at', order: 'desc' }
+        });
 
-        if (error) {
-            container.innerHTML = `<p style="color:#ef4444">Error de conexión.</p>`;
-            return;
-        }
-        if (!data || data.length === 0) {
-            container.innerHTML = `<p>No se encontraron repeticiones aún.</p>`;
+        if (error || !data) {
+            container.innerHTML = "<p>Error al cargar.</p>";
             return;
         }
 
-        // Limpiamos y renderizamos las tarjetas
+        const archivos = data.filter(f => f.name !== ".emptyFolderPlaceholder");
+        if (archivos.length === 0) {
+            container.innerHTML = "<p>No hay partidas grabadas todavía.</p>";
+            return;
+        }
+
         container.innerHTML = "";
-        data.forEach(file => {
-            if(file.name === ".emptyFolderPlaceholder") return; // Ignorar archivos de sistema
-
+        archivos.forEach(file => {
             const { data: urlData } = _supabase.storage.from('replays').getPublicUrl(file.name);
-            
             container.innerHTML += `
-                <div class="card" onclick="verVideo('${urlData.publicUrl}')">
+                <div class="card">
                     <h3>${file.name.replace('.hbr2', '')}</h3>
                     <p>📅 ${new Date(file.created_at).toLocaleDateString()}</p>
-                    <button class="btn-card-view">▶ VER VIDEO</button>
+                    <button class="btn-main" style="width:100%; font-size:0.9rem;" onclick="verVideo('${urlData.publicUrl}')">VER PARTIDO</button>
                 </div>
             `;
         });
     }
 
-    // 5. Funciones del Reproductor de Video
     function verVideo(url) {
-        document.getElementById('player-modal').style.display = 'flex';
-        // Usamos el visor oficial de Haxball
+        // ESTA ES LA CLAVE: Abrimos en pestaña nueva para evitar el error de conexión rechazada
         const visorUrl = `https://www.haxball.com/replay?url=${encodeURIComponent(url)}`;
-        document.getElementById('modal-video-container').innerHTML = `<iframe src="${visorUrl}" frameborder="0"></iframe>`;
-    }
-
-    function cerrarReproductor() {
-        document.getElementById('player-modal').style.display = 'none';
-        document.getElementById('modal-video-container').innerHTML = "";
+        window.open(visorUrl, '_blank');
     }
 </script>
-
 </body>
 </html>
